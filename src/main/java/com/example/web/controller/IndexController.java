@@ -56,66 +56,24 @@ import com.example.web.bean.Person;
 @Controller  // http://localhost:8080/PhoneNumber/person/
 @RequestMapping("/PhoneNumber/person")
 public class IndexController {
-	
-	
+
+
+
 	@RequestMapping("/")
 	public String LoginPage() {
+		return "LoginPage";
 
-
-				return "LoginPage";
-				
 	}
-
-
-
 
 	@RequestMapping(value="/personXml", method= {RequestMethod.GET,RequestMethod.POST},produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	//@RequestMapping(value="/personXml",produces={MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	//@RequestMapping(value="/personXml", method=RequestMethod.GET,produces="application/xml")
-    public Person getStudentXml(@RequestParam(value="phoneNumber", required=false) String value)
-    {
-		
+	public Person getStudentXml(@RequestParam(value="phoneNumber", required=false) String value)
+	{
 		System.out.println("phoneNumber:"+ value);
 		Person person = new Person();
-		
+
 		String valueReceive = value;
-		int count = 0;
-		for (int i = 0, len = valueReceive.length(); i < len; i++) {
-		    if (Character.isDigit(valueReceive.charAt(i))) {
-		        count++;
-		    }
-
-		  	}
-		
-		if(count==10) {
-			
-			person.setRegistrationNumber(value);
-			person.setValidStatus("Valid");
-			person.setRegistrationStatus("Success");
-		}else
-		{
-						
-			person.setRegistrationNumber(value);
-			person.setValidStatus("In Valid");
-			person.setRegistrationStatus("Bad Request");
-
-		}
-		
-		//http://localhost:8080/PhoneNumber/person/personXml?phoneNumber=12345678911
-		//http://localhost:8080/PhoneNumber/person/personXml?phoneNumber=12345678911
-		//http://192.168.0.13:8080/PhoneNumber/person/personXml?phoneNumber=221234567891
-
-		
-	
-        return person;
-    }
-
-	@RequestMapping("/Result")
-	public String ResultPage(ModelMap modelMap, @RequestParam(value="value", required=false) int value) {
-
-		Person person = new Person();
-
-		String valueReceive = String.valueOf(value);
 		int count = 0;
 		for (int i = 0, len = valueReceive.length(); i < len; i++) {
 			if (Character.isDigit(valueReceive.charAt(i))) {
@@ -124,15 +82,53 @@ public class IndexController {
 		}
 
 		if(count==10) {
-			modelMap.put("currentValue", value+" is Valid");
-		}else
-		{
-			modelMap.put("currentValue", value+" is InValid");
+
+			person.setRegistrationNumber(value);
+			person.setValidStatus("Valid");
+			person.setRegistrationStatus("Success");
+		}else{
+
+			person.setRegistrationNumber(value);
+			person.setValidStatus("In Valid");
+			person.setRegistrationStatus("Bad Request");
+
 		}
 
-    	return "Result";
+		//http://localhost:8080/PhoneNumber/person/personXml?phoneNumber=12345678911
+		//http://localhost:8080/PhoneNumber/person/personXml?phoneNumber=12345678911
+		//http://192.168.0.13:8080/PhoneNumber/person/personXml?phoneNumber=221234567891
 
+
+		return person;
+	}
+
+	@RequestMapping("/Result")
+	public String ResultPage(ModelMap modelMap, @RequestParam(value="value", required=false) String valueReceive) {
+
+		Person person = new Person();
+		String result = "";
+
+		if (valueReceive.length() == 10) {
+			modelMap.put("currentValue", valueReceive + " is Valid");
+			int count = 0;
+			for (int i = 0, len = valueReceive.length(); i < len; i++) {
+				if (Character.isDigit(valueReceive.charAt(i))) {
+					result = "Result";  // success result page
+				}else{
+					result = "Error"; // goes go error page
+				}
+
+			}
+		} else {
+			result = "Error";  // goes to error page
+		}
+		return result;
 	}
 
 
+	@RequestMapping("/Error")
+	public String Error() {
+		return "Error";
+
+	}
 }
